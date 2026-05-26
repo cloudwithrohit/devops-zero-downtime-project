@@ -11,15 +11,23 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t zero-downtime-app .'
+                sh 'docker build -t dockwithrohit/nginx-demo .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push dockwithrohit/nginx-demo'
             }
         }
 
         stage('Run Container') {
             steps {
-                sh 'docker stop zero-container || true'
-                sh 'docker rm zero-container || true'
-                sh 'docker run -d --name zero-container -p 8083:80 zero-downtime-app'
+                sh '''
+                docker stop mynginx || true
+                docker rm mynginx || true
+                docker run -d --name mynginx -p 80:80 dockwithrohit/nginx-demo
+                '''
             }
         }
 
